@@ -1,0 +1,8 @@
+.webview-container {
+    margin-top: 100px;
+}
+
+.webview {
+    width: 80%;
+    height: 500px;
+}
