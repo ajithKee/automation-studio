@@ -2,7 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const pie = require('./puppeteer/electron-puppeteer');
 const puppeteer = require('puppeteer-core');
-const {performSampleTest} = require('./puppeteer/sample-test')
+const { performSampleTest } = require('./puppeteer/sample-test');
 
 let browser, studioWindow;
 
@@ -14,15 +14,14 @@ let browser, studioWindow;
     browser = await pie.connect(app, puppeteer);
 })();
 
-
 app.on('ready', async () => {
     createStudioWindow();
 
     /* Stub code to test the puppeteer-electron integration. */
-    setTimeout(async ()=> {
+    setTimeout(async () => {
         const page = await pie.getWebViewWindowPage(browser, studioWindow);
-        await performSampleTest(page)
-    }, 2000)
+        await performSampleTest(page);
+    }, 2000);
 });
 
 app.on('window-all-closed', () => {
