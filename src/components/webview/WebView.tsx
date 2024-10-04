@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './WebView.css';
+import Draggable from 'react-draggable';
+import { WebviewTag } from 'electron';
 
 type WebViewProps = {
     url: string;
@@ -10,10 +12,31 @@ type WebViewProps = {
  * @param url:: Initial URL to load.
  */
 function WebView({ url }: WebViewProps) {
+    /* Code to control the webview display props and devTools */
+    useEffect(() => {
+        const webview = document.getElementById(
+            'web-view'
+        ) as unknown as WebviewTag;
+        webview.addEventListener('dom-ready', function () {
+            // webview.openDevTools();
+            webview.setZoomFactor(0.5);
+        });
+    }, []);
+
     return (
-        <div className={'webview-container'}>
-            <webview id="web-view" src={url} className={'webview'}></webview>
-        </div>
+        <>
+            <Draggable disabled={true}>
+                <div className={'webview-container-parent'}>
+                    <div className={'webview-container'}>
+                        <webview
+                            id="web-view"
+                            src={url}
+                            className={'webview'}
+                        ></webview>
+                    </div>
+                </div>
+            </Draggable>
+        </>
     );
 }
 

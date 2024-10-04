@@ -1,8 +1,15 @@
+.webview-container-parent {
+    background-color: darkgray;
+    align-content: center;
+    width: 90%;
+    padding: 5px;
+    margin-left: 20px;
+}
+
 .webview-container {
-    margin-top: 100px;
 }
 
 .webview {
-    width: 80%;
+    width: 100%;
     height: 500px;
 }
