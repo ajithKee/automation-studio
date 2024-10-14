@@ -1,9 +1,11 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
-type codeEditorProps = {};
+type codeEditorProps = {
+    pageTitle: string
+};
 
-function CodeEditor(props: codeEditorProps) {
+function CodeEditor({pageTitle}: codeEditorProps) {
     return (
         <>
             <div className={'code-editor-container'}>
@@ -13,7 +15,7 @@ function CodeEditor(props: codeEditorProps) {
                     height="300"
                     language="javascript"
                     theme="vs-dark"
-                    value={'console.log("ajith")'}
+                    value={`Current Page Title: ${pageTitle}`}
                 />
             </div>
         </>

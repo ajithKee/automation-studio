@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import WebView from './components/webview/WebView';
 import CodeEditor from './components/codeEditor/CodeEditor';
@@ -6,6 +6,10 @@ import SplitPane from 'react-split-pane';
 import Dag from './components/dag/Dag';
 
 function App() {
+    const [pageTitle, setPageTitle] = useState('');
+    const getPageTitleFromWebView = (title: string) => {
+        setPageTitle(title)
+    }
     return (
         // @ts-ignore
         <SplitPane
@@ -21,11 +25,11 @@ function App() {
                 defaultSize={350}
                 className={'main'}
             >
-                <CodeEditor></CodeEditor>
+                <CodeEditor pageTitle={pageTitle}></CodeEditor>
                 <Dag></Dag>
             </SplitPane>
 
-            <WebView url="http://www.google.com"></WebView>
+            <WebView url="http://www.google.com" sendTitleToCodeEditor={getPageTitleFromWebView}></WebView>
         </SplitPane>
     );
 }
