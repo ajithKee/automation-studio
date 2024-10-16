@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import WebView from './components/webview/WebView';
 import CodeEditor from './components/codeEditor/CodeEditor';
@@ -8,8 +8,8 @@ import Dag from './components/dag/Dag';
 function App() {
     const [pageTitle, setPageTitle] = useState('');
     const getPageTitleFromWebView = (title: string) => {
-        setPageTitle(title)
-    }
+        setPageTitle(title);
+    };
     return (
         // @ts-ignore
         <SplitPane
@@ -29,7 +29,10 @@ function App() {
                 <Dag></Dag>
             </SplitPane>
 
-            <WebView url="http://www.google.com" sendTitleToCodeEditor={getPageTitleFromWebView}></WebView>
+            <WebView
+                url="http://www.google.com"
+                sendTitleToCodeEditor={getPageTitleFromWebView}
+            ></WebView>
         </SplitPane>
     );
 }

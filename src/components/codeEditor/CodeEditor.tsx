@@ -2,10 +2,10 @@ import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
 type codeEditorProps = {
-    pageTitle: string
+    pageTitle: string;
 };
 
-function CodeEditor({pageTitle}: codeEditorProps) {
+function CodeEditor({ pageTitle }: codeEditorProps) {
     return (
         <>
             <div className={'code-editor-container'}>

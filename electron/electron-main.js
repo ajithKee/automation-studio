@@ -1,10 +1,11 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, contextBridge } = require('electron');
 const path = require('path');
 const pie = require('./puppeteer/electron-puppeteer');
 const puppeteer = require('puppeteer-core');
 const { performSampleTest } = require('./puppeteer/sample-test');
 
-let browser, studioWindow;
+let browser, studioWindow, page;
+let currentIndex = 0;
 
 /**
  * connect the app with Puppeteer.
@@ -16,12 +17,6 @@ let browser, studioWindow;
 
 app.on('ready', async () => {
     createStudioWindow();
-
-    /* Stub code to test the puppeteer-electron integration. */
-    setTimeout(async () => {
-        const page = await pie.getWebViewWindowPage(browser, studioWindow);
-        await performSampleTest(page);
-    }, 2000);
 });
 
 app.on('window-all-closed', () => {
@@ -39,6 +34,7 @@ const createStudioWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
+            nodeIntegrationInSubFrames: true,
             webviewTag: true,
             preload: path.join(__dirname, 'electron-main-preload.js'),
         },
@@ -49,4 +45,21 @@ const createStudioWindow = () => {
     //studioWindow.webContents.openDevTools();
     studioWindow.maximize();
     studioWindow.show();
+
+    studioWindow.webContents.on('dom-ready', async () => {
+        page = await pie.getWebViewWindowPage(browser, studioWindow);
+        //await performSampleTest(page);
+    });
 };
+
+/*
+    On next button click, splits the code to get just the line and then execute it. Just proof of concept. Needs more secure implementation
+ */
+ipcMain.on('execute-current-line-of-code', async () => {
+    let sampleScript = `page.goto('https://www.healthcare.gov');
+    page.click('xpath/' + "//a[contains(text(),'Log in')]");
+    page.click('xpath/' + "//a[contains(text(),'Español')]")`;
+    let line = sampleScript.split(';');
+    eval(line[currentIndex].trim());
+    currentIndex++;
+});
