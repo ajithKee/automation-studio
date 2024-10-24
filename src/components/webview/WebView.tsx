@@ -1,18 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './WebView.css';
 import Draggable from 'react-draggable';
-import { WebviewTag, NativeImage } from 'electron';
+import { WebviewTag, NativeImage, DesktopCapturer } from 'electron';
 
 import IconButton from '@mui/material/IconButton';
-import { ArrowForward } from '@mui/icons-material';
+import { ArrowForward, VideoCall } from '@mui/icons-material';
 import MonacoEditor from 'react-monaco-editor';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 
 type WebViewProps = {
     url: string;
     sendTitleToCodeEditor: (title: string) => void;
     textFromCodeEditor: string;
 };
+
+let desktopCapturer: DesktopCapturer;
 
 /**
  * Component that renders the embedded browser
@@ -23,6 +27,8 @@ function WebView({
     sendTitleToCodeEditor,
     textFromCodeEditor,
 }: WebViewProps) {
+    const webviewRef = useRef(null);
+
     let [content, setContent] = useState('');
     /* Code to extract the page title from the webview */
     const extractPageTitle = (webview: WebviewTag) => {
@@ -71,6 +77,17 @@ function WebView({
         });
     }
 
+    function captureVideo(): void {
+        // @ts-ignore
+        window.electronAPI.startScreenRecording();
+    }
+
+    function endCaptureVideo(): void {
+        // @ts-ignore
+        window.electronAPI.stopScreenRecording();
+    }
+
+    // @ts-ignore
     // @ts-ignore
     return (
         <>
@@ -87,11 +104,10 @@ function WebView({
 
                     <div className={'webview-container'}>
                         <webview
-                            allowpopups
+                            ref={webviewRef}
                             id="web-view"
                             src={url}
                             className={'webview'}
-                            nodeintegration
                         ></webview>
                     </div>
 
@@ -102,6 +118,24 @@ function WebView({
                         onClick={captureScreenshot}
                     >
                         <CameraAltIcon />
+                    </IconButton>
+
+                    <IconButton
+                        aria-label="next"
+                        size="small"
+                        color={'error'}
+                        onClick={captureVideo}
+                    >
+                        <VideoCall />
+                    </IconButton>
+
+                    <IconButton
+                        aria-label="next"
+                        size="small"
+                        color={'error'}
+                        onClick={endCaptureVideo}
+                    >
+                        <VideocamOffIcon />
                     </IconButton>
 
                     <MonacoEditor

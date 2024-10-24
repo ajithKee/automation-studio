@@ -7,4 +7,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     captureWebViewScreenshot: (imageBuffer) => {
         ipcRenderer.send('execute-capture-screenshot', imageBuffer);
     },
+    startScreenRecording: () => {
+        ipcRenderer.send('start-screen-recording');
+    },
+    stopScreenRecording: () => {
+        ipcRenderer.send('stop-screen-recording');
+    },
 });

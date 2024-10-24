@@ -5,7 +5,10 @@ const puppeteer = require('puppeteer-core');
 const { performSampleTest } = require('./puppeteer/sample-test');
 var fs = require('fs');
 
+const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
+
 let browser, studioWindow, page;
+let recorder;
 let currentIndex = 0;
 
 /**
@@ -49,6 +52,7 @@ const createStudioWindow = () => {
 
     studioWindow.webContents.on('dom-ready', async () => {
         page = await pie.getWebViewWindowPage(browser, studioWindow);
+        recorder = new PuppeteerScreenRecorder(page);
         //await performSampleTest(page);
     });
 };
@@ -74,4 +78,13 @@ ipcMain.on('execute-capture-screenshot', async (event, imageData) => {
             console.log('File written successfully.');
         }
     });
+});
+
+ipcMain.on('start-screen-recording', async (event) => {
+    const SavePath = './demo-screen-capture.mp4';
+    await recorder.start(SavePath);
+});
+
+ipcMain.on('stop-screen-recording', async (event) => {
+    await recorder.stop();
 });
