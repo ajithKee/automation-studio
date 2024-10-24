@@ -3,6 +3,7 @@ const path = require('path');
 const pie = require('./puppeteer/electron-puppeteer');
 const puppeteer = require('puppeteer-core');
 const { performSampleTest } = require('./puppeteer/sample-test');
+var fs = require('fs');
 
 let browser, studioWindow, page;
 let currentIndex = 0;
@@ -62,4 +63,15 @@ ipcMain.on('execute-current-line-of-code', async () => {
     let line = sampleScript.split(';');
     eval(line[currentIndex].trim());
     currentIndex++;
+});
+
+ipcMain.on('execute-capture-screenshot', async (event, imageData) => {
+    let filePath = path.join(__dirname, 'test_image.png');
+    fs.writeFile(filePath, imageData, (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+        } else {
+            console.log('File written successfully.');
+        }
+    });
 });

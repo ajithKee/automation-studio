@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './WebView.css';
 import Draggable from 'react-draggable';
-import { WebviewTag } from 'electron';
+import { WebviewTag, NativeImage } from 'electron';
+
 import IconButton from '@mui/material/IconButton';
 import { ArrowForward } from '@mui/icons-material';
 import MonacoEditor from 'react-monaco-editor';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 
 type WebViewProps = {
     url: string;
@@ -57,6 +59,18 @@ function WebView({
         window.electronAPI.executeCurrentLineAndWait();
     }
 
+    function captureScreenshot(): void {
+        const webview = document.getElementById(
+            'web-view'
+        ) as unknown as WebviewTag;
+
+        webview.capturePage().then((image: NativeImage) => {
+            let imagePng = image.toPNG();
+            // @ts-ignore
+            window.electronAPI.captureWebViewScreenshot(imagePng);
+        });
+    }
+
     // @ts-ignore
     return (
         <>
@@ -80,6 +94,15 @@ function WebView({
                             nodeintegration
                         ></webview>
                     </div>
+
+                    <IconButton
+                        aria-label="next"
+                        size="small"
+                        color={'error'}
+                        onClick={captureScreenshot}
+                    >
+                        <CameraAltIcon />
+                    </IconButton>
 
                     <MonacoEditor
                         className={'code-editor-container'}

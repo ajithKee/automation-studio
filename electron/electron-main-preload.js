@@ -4,4 +4,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     executeCurrentLineAndWait: (message) => {
         ipcRenderer.send('execute-current-line-of-code', message);
     },
+    captureWebViewScreenshot: (imageBuffer) => {
+        ipcRenderer.send('execute-capture-screenshot', imageBuffer);
+    },
 });
