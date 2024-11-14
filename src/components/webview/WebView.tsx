@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import { ArrowForward, VideoCall } from '@mui/icons-material';
 import MonacoEditor from 'react-monaco-editor';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 
 type WebViewProps = {
@@ -16,7 +15,6 @@ type WebViewProps = {
     textFromCodeEditor: string;
 };
 
-let desktopCapturer: DesktopCapturer;
 
 /**
  * Component that renders the embedded browser
@@ -42,9 +40,15 @@ function WebView({
             'web-view'
         ) as unknown as WebviewTag;
         webview.addEventListener('dom-ready', function () {
-            //webview.openDevTools();
+            webview.openDevTools();
             webview.setZoomFactor(0.5);
             extractPageTitle(webview);
+
+
+
+
+
+
         });
     }, []);
 
@@ -58,11 +62,46 @@ function WebView({
                 .executeJavaScript(textFromCodeEditor)
                 .then((response) => setContent(response));
         }
-    }, [textFromCodeEditor]);
+
+
+        /* Inject a custom event function into webview */
+        const testScript = `document.addEventListener('keypress', function(event) {
+        if (event.ctrlKey && event.key === 'E') {
+        console.log(document.documentElement.innerHTML);
+        return document.documentElement.innerHTML;
+        }});`;
+
+        webview.addEventListener('dom-ready', function () {
+            webview
+                .executeJavaScript(testScript);
+        });
+
+    }, []);
 
     function executeCurrentLine(): void {
         // @ts-ignore
         window.electronAPI.executeCurrentLineAndWait();
+    }
+
+    function extractTopLevelElements(): void {
+        const webview = document.getElementById(
+            'web-view'
+        ) as unknown as WebviewTag;
+
+        const testScript = `function extractTopLevelDivs() {
+                const rootElement = document.documentElement;
+                const bodyElement = rootElement.querySelector("body");
+                const divList = bodyElement.querySelectorAll("body:scope > div");
+                console.log(divList);
+                return divList;
+            };
+                
+                extractTopLevelDivs();
+            `;
+
+        webview
+            .executeJavaScript(testScript)
+            .then((response) => console.log(response));
     }
 
     function captureScreenshot(): void {
@@ -146,6 +185,15 @@ function WebView({
                         theme="vs-dark"
                         value={content}
                     />
+
+                    <IconButton
+                        aria-label="next"
+                        size="small"
+                        color={'error'}
+                        onClick={extractTopLevelElements}
+                    >
+                        <ArrowForward />
+                    </IconButton>
                 </div>
             </Draggable>
         </>

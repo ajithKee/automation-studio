@@ -46,7 +46,7 @@ const createStudioWindow = () => {
 
     studioWindow = new BrowserWindow(config);
     studioWindow.loadURL('http://localhost:3000');
-    //studioWindow.webContents.openDevTools();
+    studioWindow.webContents.openDevTools();
     studioWindow.maximize();
     studioWindow.show();
 
